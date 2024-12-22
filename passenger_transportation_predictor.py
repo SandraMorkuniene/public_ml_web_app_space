@@ -5,8 +5,19 @@ import joblib
 import boto3
 from botocore.exceptions import NoCredentialsError
 
-# AWS S3 Client (download the model from S3)
-s3 = boto3.client('s3')
+# Access AWS credentials from Streamlit 
+aws_access_key = st.secrets["aws"]["AWS_ACCESS_KEY_ID"]
+aws_secret_key = st.secrets["aws"]["AWS_SECRET_ACCESS_KEY"]
+aws_region = st.secrets["aws"]["AWS_DEFAULT_REGION"]
+
+# Initialize S3 client
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=aws_access_key,
+    aws_secret_access_key=aws_secret_key,
+    region_name=aws_region
+)
+
 
 # Define the S3 bucket and model file key
 bucket_name = 'my.spacemodel.s3.bucket'
