@@ -86,8 +86,8 @@ class ConditionalScaler(BaseEstimator, TransformerMixin):
         return input_features
 
 
-df=df_initial.drop(columns=['Transported', 'PassengerId','Cabin', 'Name' ])
-#missing_columns = df.columns[df.isnull().any()].tolist()
+#df=X.drop(columns=['Transported', 'PassengerId','Cabin', 'Name' ])
+
 
 numerical_clm = df.select_dtypes(include=["number"]).columns.tolist()
 categorical_clm = df.select_dtypes(include=["object", "category"]).columns.tolist()
