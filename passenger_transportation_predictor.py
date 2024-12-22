@@ -46,6 +46,7 @@ def download_model_from_s3():
         return None
 
 
+# Custom Transformer to create new features
 class FeatureEngineering(BaseEstimator, TransformerMixin):
     def __init__(self):
         pass
@@ -63,6 +64,64 @@ class FeatureEngineering(BaseEstimator, TransformerMixin):
       X = X.drop(columns=['Cabin', 'Deck', 'Side', 'Name', 'PassengerId'])
 
       return X
+
+
+# Custom ConditionalScaler to optionally skip scaling
+class ConditionalScaler(BaseEstimator, TransformerMixin):
+    def __init__(self, enable_scaling=True):
+        self.enable_scaling = enable_scaling
+        self.scaler = StandardScaler()
+
+    def fit(self, X, y=None):
+        if self.enable_scaling:
+            self.scaler.fit(X)
+        return self
+
+    def transform(self, X):
+        if self.enable_scaling:
+            return self.scaler.transform(X)
+        return X
+
+    def get_feature_names_out(self, input_features=None):
+        return input_features
+
+
+df=df_initial.drop(columns=['Transported', 'PassengerId','Cabin', 'Name' ])
+#missing_columns = df.columns[df.isnull().any()].tolist()
+
+numerical_clm = df.select_dtypes(include=["number"]).columns.tolist()
+categorical_clm = df.select_dtypes(include=["object", "category"]).columns.tolist()
+
+zero_impute_clm = ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]
+
+numerical_clm = [col for col in numerical_clm if col not in zero_impute_clm]
+
+# Pipelines
+categorical_transformer = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("encoder", OneHotEncoder(handle_unknown="ignore"))
+])
+
+numerical_transformer = Pipeline([
+    ("imputer", SimpleImputer(strategy="median")),
+    ("scaler", ConditionalScaler(enable_scaling=True))
+])
+
+
+zero_impute_transformer = Pipeline([
+    ("imputer", SimpleImputer(strategy="constant", fill_value=0)),
+    ("scaler", ConditionalScaler(enable_scaling=True))
+])
+
+
+# Column Transformer
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", numerical_transformer, numerical_clm),
+        ("cat", categorical_transformer, categorical_clm),
+        ("zero", zero_impute_transformer, zero_impute_clm),
+    ]
+)
 
 # Load the model
 model = download_model_from_s3()
