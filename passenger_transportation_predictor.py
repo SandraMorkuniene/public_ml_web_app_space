@@ -89,8 +89,8 @@ class ConditionalScaler(BaseEstimator, TransformerMixin):
 #df=X.drop(columns=['Transported', 'PassengerId','Cabin', 'Name' ])
 
 
-numerical_clm = df.select_dtypes(include=["number"]).columns.tolist()
-categorical_clm = df.select_dtypes(include=["object", "category"]).columns.tolist()
+numerical_clm = X.select_dtypes(include=["number"]).columns.tolist()
+categorical_clm = X.select_dtypes(include=["object", "category"]).columns.tolist()
 
 zero_impute_clm = ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]
 
