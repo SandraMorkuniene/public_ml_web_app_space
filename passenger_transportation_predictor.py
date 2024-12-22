@@ -36,7 +36,7 @@ st.title("Passenger Transportation Predictor")
 st.write("""
 Upload a CSV file containing passenger details to predict whether each passenger was transported or not.
 The file should include the required columns:
-- PassengerID
+- PassengerId
 - HomePlanet
 - CryoSleep (0 = No, 1 = Yes)
 - Cabin
@@ -58,7 +58,7 @@ if uploaded_file is not None:
 
         # Validate the required columns
         required_columns = [
-            "PassengerID", "HomePlanet", "CryoSleep", "Cabin", "Destination",
+            "PassengerId", "HomePlanet", "CryoSleep", "Cabin", "Destination",
             "Age", "VIP", "RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"
         ]
         if not all(column in data.columns for column in required_columns):
