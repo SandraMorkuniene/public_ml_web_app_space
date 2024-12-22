@@ -38,6 +38,25 @@ def download_model_from_s3():
         st.error(f"Error downloading the model from S3: {e}")
         return None
 
+
+class FeatureEngineering(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+      X['Cabin'] = X['Cabin'].fillna('')
+      X['Deck'] = X['Cabin'].apply(lambda x: x[0] if isinstance(x, str) and len(x) > 0 else np.nan)
+      X['Side'] = X['Cabin'].apply(lambda x: x[-1] if isinstance(x, str) and len(x) > 0 else np.nan)
+      X['Side_Deck'] = X.apply(lambda row: row['Side'] + "_" + row['Deck'] if isinstance(row['Side'], str) and isinstance(row['Deck'], str) else np.nan, axis=1)
+
+      # Drop columns that are not needed for modeling
+      X = X.drop(columns=['Cabin', 'Deck', 'Side', 'Name', 'PassengerId'])
+
+      return X
+
 # Load the model
 model = download_model_from_s3()
 
