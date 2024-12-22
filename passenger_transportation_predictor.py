@@ -1,9 +1,16 @@
+from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
 
 import streamlit as st
 import pandas as pd
 import joblib
 import boto3
 from botocore.exceptions import NoCredentialsError
+
 
 # Access AWS credentials from Streamlit 
 aws_access_key = st.secrets["aws"]["AWS_ACCESS_KEY_ID"]
