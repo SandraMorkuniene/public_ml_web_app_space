@@ -140,7 +140,7 @@ if uploaded_file is not None:
                     data["Transported_Probability"] = prediction_probs
 
                     st.write("Predictions:")
-                    st.dataframe(data[["PassengerID", "Transported", "Transported_Probability"]])
+                    st.dataframe(data[["PassengerId", "Transported", "Transported_Probability"]])
 
                     
                     csv = data.to_csv(index=False)
