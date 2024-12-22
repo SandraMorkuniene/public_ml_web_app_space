@@ -86,43 +86,6 @@ class ConditionalScaler(BaseEstimator, TransformerMixin):
         return input_features
 
 
-#df=X.drop(columns=['Transported', 'PassengerId','Cabin', 'Name' ])
-
-
-numerical_clm = X.select_dtypes(include=["number"]).columns.tolist()
-categorical_clm = X.select_dtypes(include=["object", "category"]).columns.tolist()
-
-zero_impute_clm = ["RoomService", "FoodCourt", "ShoppingMall", "Spa", "VRDeck"]
-
-numerical_clm = [col for col in numerical_clm if col not in zero_impute_clm]
-
-# Pipelines
-categorical_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="most_frequent")),
-    ("encoder", OneHotEncoder(handle_unknown="ignore"))
-])
-
-numerical_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="median")),
-    ("scaler", ConditionalScaler(enable_scaling=True))
-])
-
-
-zero_impute_transformer = Pipeline([
-    ("imputer", SimpleImputer(strategy="constant", fill_value=0)),
-    ("scaler", ConditionalScaler(enable_scaling=True))
-])
-
-
-# Column Transformer
-preprocessor = ColumnTransformer(
-    transformers=[
-        ("num", numerical_transformer, numerical_clm),
-        ("cat", categorical_transformer, categorical_clm),
-        ("zero", zero_impute_transformer, zero_impute_clm),
-    ]
-)
-
 # Load the model
 model = download_model_from_s3()
 
